@@ -13,8 +13,11 @@ digest and add a lazycat manifest on top. Same shape as
 ## Lazycat appstore identifiers
 
 - **package id**: `cloud.lazycat.app.lazy-taskchampion`
-- **app_id**: TBD (recorded after first bootstrap)
+- **app_id**: `5395` (recorded 2026-05-11, first bootstrap)
 - **subdomain**: `taskchampion` → `https://taskchampion.<box-domain>`
+- **bootstrap workflow**: when re-running `bootstrap-app.yml` to
+  resubmit a fix, pass `app_id=5395` so the workflow skips
+  `/app/create` (would 500 on duplicate package).
 - **upstream image**: `ghcr.io/gothenburgbitfactory/taskchampion-sync-server`
   - **current pin**: `0.7.1` =
     `sha256:7903477ff4857cc7c702377d1c93a3f6703eed2f89e1733400b8599a4d0bb1bc`
