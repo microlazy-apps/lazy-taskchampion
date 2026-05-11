@@ -1,0 +1,7 @@
+params:
+  - id: CLIENT_ID
+    type: string
+    name: "客户端 ID 白名单 (Client ID allowlist)"
+    description: "可选。填一个 UUID 把服务限定到这个 client_id 才能注册；留空则允许任意 client_id 注册（默认）。安全保护交给加密 secret。"
+    default_value: ""
+    optional: true

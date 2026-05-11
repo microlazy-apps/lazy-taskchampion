@@ -1,0 +1,141 @@
+package: cloud.lazycat.app.lazy-taskchampion
+version: ${VERSION}
+name: TaskChampion Sync Server
+description: Taskwarrior 的同步服务 (TaskChampion sync-server)
+author: GothenburgBitFactory
+license: MIT
+homepage: https://github.com/microlazy-apps/lazy-taskchampion
+
+unsupported_platforms:
+  - ios
+  - android
+
+locales:
+  zh-CN:
+    name: TaskChampion Sync Server
+    description: Taskwarrior 3.x+ 的官方同步服务端 —— 给 task / vit 等客户端做端到端加密的多机同步。
+    usage: |
+      ## 这是什么
+
+      TaskChampion 是 Taskwarrior (3.x+) 用来存储任务的底层数据库 —— 任务
+      数据 + 多副本同步协议。本应用是它的**同步服务端**，让你在多台机器
+      上运行 `task` / `vit` 时数据保持同步。
+
+      数据在客户端本地用 `sync.encryption_secret` 加密后才上传 —— 服务端
+      看不到任务正文，只存密文增量。
+
+      ## 客户端配置（taskwarrior / vit）
+
+      装好后，每台需要同步的机器执行：
+
+      ```bash
+      # 生成一个 client_id（每台机器一次，UUID v4）
+      CID=$(uuidgen)
+
+      # 自选一个加密 secret，所有 replica 必须用同一个
+      SEC=$(pwgen -s 32 1)
+
+      task config sync.server.url       https://taskchampion.<your-box>.heiyu.space
+      task config sync.server.client_id $CID
+      task config sync.encryption_secret $SEC
+
+      task sync   # 首次同步
+      ```
+
+      ### vit
+
+      vit 是 Taskwarrior 的终端 UI，本身**不做同步**，所有同步靠
+      `task sync`。在 vit 里按大写 `S` 就等价于在 shell 跑 `task sync`，
+      读的是同一份 `~/.taskrc`。所以上面三行配好之后 vit 也就同步好了。
+
+      想要 vit 启动/退出时自动同步，在 `~/.vit/config.ini` 写：
+
+      ```ini
+      [vit]
+      sync_on_start = true
+      sync_on_end = true
+      ```
+
+      ## 多设备同步
+
+      第 2、3、N 台机器：用**不同**的 `client_id`（每台一个 UUID），但用
+      **同一个** `sync.encryption_secret`，再 `task sync` 一次，本地 replica
+      就会和服务端的密文增量合并。
+
+      ## 客户端 ID 白名单（可选）
+
+      默认这台 sync 服务器接受任意 `client_id` 注册（保护交给加密 secret）。
+      如果你想强制只允许某一个 UUID 注册，安装时在「客户端 ID 白名单」
+      字段填上那个 UUID。留空 = 允许任意 UUID。
+
+      ## 数据
+
+      - 服务端只存 SQLite + 加密 blob，放在 `/lzcapp/var/persist`，
+        重装容器不丢
+      - 任务正文加密在客户端完成，服务端看不到明文
+      - 想备份：复制 `/lzcapp/var/persist` 目录就行
+  en:
+    name: TaskChampion Sync Server
+    description: Official sync server for Taskwarrior 3.x+ — end-to-end encrypted multi-replica sync for `task` / `vit` and any TaskChampion-backed client.
+    usage: |
+      ## What this is
+
+      TaskChampion is the task DB + replication protocol behind Taskwarrior 3.x+.
+      This app is its **sync server side**, so your `task` / `vit` installs on
+      laptop, desktop, and phone stay in sync.
+
+      Tasks are encrypted client-side with `sync.encryption_secret` before
+      upload — the server stores opaque encrypted deltas only.
+
+      ## Client setup (taskwarrior / vit)
+
+      On every replica:
+
+      ```bash
+      # one fresh client_id per machine (UUID v4)
+      CID=$(uuidgen)
+
+      # one shared encryption secret across ALL replicas
+      SEC=$(pwgen -s 32 1)
+
+      task config sync.server.url       https://taskchampion.<your-box>.heiyu.space
+      task config sync.server.client_id $CID
+      task config sync.encryption_secret $SEC
+
+      task sync   # initial push
+      ```
+
+      ### vit
+
+      vit is Taskwarrior's curses TUI; it does **not** sync directly. Pressing
+      capital `S` inside vit just shells out to `task sync` using your
+      `~/.taskrc`. Configure taskwarrior as above and vit picks it up.
+
+      To auto-sync on vit start/quit, in `~/.vit/config.ini`:
+
+      ```ini
+      [vit]
+      sync_on_start = true
+      sync_on_end = true
+      ```
+
+      ## Adding replicas
+
+      For the 2nd, 3rd, ... machine: use a **different** `client_id` per
+      replica (one UUID each), but the **same** `sync.encryption_secret`,
+      then run `task sync`. Your local replica merges against the encrypted
+      deltas already on the server.
+
+      ## Client-ID allowlist (optional)
+
+      By default this server accepts any `client_id` (security is provided by
+      the encryption secret). To pin the server to a single UUID, fill in the
+      "Client ID allowlist" param at install time. Leave it blank to allow any
+      UUID to register.
+
+      ## Data
+
+      - Server stores SQLite + encrypted blobs under `/lzcapp/var/persist`,
+        survives container reinstalls
+      - Server never sees plaintext; all encryption happens client-side
+      - To back up: copy the `/lzcapp/var/persist` directory

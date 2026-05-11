@@ -1,0 +1,56 @@
+source: https://github.com/GothenburgBitFactory/taskchampion-sync-server
+source_author: GothenburgBitFactory
+is_original: false
+keywords: taskwarrior,task,vit,sync,todo,gtd,replication,end-to-end-encryption,cli
+
+support_pc: true
+support_mobile: false
+
+screenshots:
+  pc: []
+  mobile: []
+
+description:
+  zh-CN: |
+    TaskChampion Sync Server 是 Taskwarrior 3.x+ 官方的同步服务端 —— 让你
+    在多台机器（笔记本 / 工作站 / 服务器）上跑 `task` 或 `vit` 时，任务
+    数据能端到端加密地双向同步。
+
+    亮点
+    - **端到端加密**：客户端用 `sync.encryption_secret` 加密后才上传；
+      服务端只存密文增量，看不到任务正文
+    - **多副本一致**：每台机器一个 client_id（UUID），共享同一个加密
+      secret 就能合并所有 replica
+    - **轻量**：单进程 Rust HTTP + SQLite，几乎不占资源
+    - **官方维护**：上游 GothenburgBitFactory 直接发布的 Docker 镜像，
+      本仓库做的是 retag —— 没修改源码
+
+    客户端
+    - taskwarrior 3.x+ 的 `task sync` 命令
+    - vit（Taskwarrior 终端 UI）按大写 `S` —— 内部就是调 `task sync`
+    - 任何嵌入 TaskChampion 库的第三方应用
+
+    上游：https://github.com/GothenburgBitFactory/taskchampion-sync-server (MIT)
+    本仓库（懒猫包装）：https://github.com/microlazy-apps/lazy-taskchampion
+  en: |
+    TaskChampion Sync Server is the official sync backend for Taskwarrior
+    3.x+. Run `task` or `vit` on multiple machines (laptop, workstation,
+    box) and keep your todo list in sync — end-to-end encrypted.
+
+    Highlights
+    - **End-to-end encrypted**: clients encrypt with
+      `sync.encryption_secret` before upload; the server stores opaque
+      ciphertext deltas only
+    - **Multi-replica**: one client_id (UUID) per machine sharing the same
+      encryption secret merges all replicas
+    - **Tiny**: single-process Rust HTTP + SQLite, negligible footprint
+    - **Upstream-maintained**: this wrapper retags the official upstream
+      Docker image — source unmodified
+
+    Clients
+    - taskwarrior 3.x+ via `task sync`
+    - vit (Taskwarrior curses TUI) — capital `S` shells out to `task sync`
+    - any third-party app embedding the TaskChampion library
+
+    Upstream: https://github.com/GothenburgBitFactory/taskchampion-sync-server (MIT)
+    This wrapper repo: https://github.com/microlazy-apps/lazy-taskchampion

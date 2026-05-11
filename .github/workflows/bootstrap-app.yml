@@ -1,0 +1,33 @@
+name: Bootstrap appstore listing (manual, first submission)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build (no leading v)"
+        required: true
+        default: "0.0.1"
+      app_id:
+        description: "Existing dev-center app_id; leave blank on FIRST run (then /app/create is called)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    uses: microlazy-apps/lazycat-ci/.github/workflows/lpk-build.yml@v0.1.0
+    with:
+      version: ${{ inputs.version }}
+      docker-context: ./docker
+    secrets: inherit
+
+  bootstrap:
+    needs: build
+    uses: microlazy-apps/lazycat-ci/.github/workflows/bootstrap.yml@v0.1.0
+    with:
+      version: ${{ inputs.version }}
+      app_id: ${{ inputs.app_id }}
+    secrets: inherit

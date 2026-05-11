@@ -1,0 +1,29 @@
+application:
+  subdomain: taskchampion
+  upstreams:
+    - location: /
+      backend: http://main:8080
+  public_path:
+    - /
+  health_check:
+    test_url: http://main:8080/
+    timeout: 10s
+    start_period: 30s
+
+services:
+  main:
+    image: ${LAZYCAT_IMAGE}
+    environment:
+      - TZ=Asia/Shanghai
+      - RUST_LOG=info
+      - DATA_DIR=/var/lib/taskchampion-sync-server/data
+      - LISTEN=0.0.0.0:8080
+      - CLIENT_ID={{.U.CLIENT_ID}}
+    binds:
+      - /lzcapp/var/persist:/var/lib/taskchampion-sync-server/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
