@@ -18,7 +18,7 @@
 ### Taskwarrior 3.x+ (`task` CLI)
 
 ```bash
-# 每台机器一个 UUID
+# client_id 标识「你这份任务数据」，所有 replica 共用同一个
 CID=$(uuidgen)
 
 # 所有 replica 共用同一个加密 secret —— 一旦确定就别再改
@@ -47,7 +47,12 @@ sync_on_end = true
 
 ### 多设备同步
 
-- 每台机器一个**不同**的 `sync.server.client_id`（UUID）
+> ⚠️ **TaskChampion 把 `client_id` 当作「这份数据集合」的标识，不是「这台
+> 机器」**。所有 replica 必须用**同一个** `client_id` + **同一个**
+> `encryption_secret` 才能看到对方推的任务。不同 client_id 在 server
+> 端是各自独立的链，互不互通。
+
+- 所有机器共用**同一个** `sync.server.client_id`
 - 所有机器共用**同一个** `sync.encryption_secret`
 - 在每台机器跑 `task sync`，本地 replica 自动跟服务端密文合并
 

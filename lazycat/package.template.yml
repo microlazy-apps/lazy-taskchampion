@@ -29,7 +29,7 @@ locales:
       装好后，每台需要同步的机器执行：
 
       ```bash
-      # 生成一个 client_id（每台机器一次，UUID v4）
+      # client_id 标识「你这份任务数据」，所有 replica 共用同一个 UUID
       CID=$(uuidgen)
 
       # 自选一个加密 secret，所有 replica 必须用同一个
@@ -41,6 +41,10 @@ locales:
 
       task sync   # 首次同步
       ```
+
+      > 注意：TaskChampion 在 server 端按 `client_id` 隔离 history
+      > 链。所有 replica 必须填**同一个** `client_id` 才能看到对方
+      > 推的任务，不是「每台一个」。
 
       ### vit
 
@@ -58,9 +62,9 @@ locales:
 
       ## 多设备同步
 
-      第 2、3、N 台机器：用**不同**的 `client_id`（每台一个 UUID），但用
-      **同一个** `sync.encryption_secret`，再 `task sync` 一次，本地 replica
-      就会和服务端的密文增量合并。
+      第 2、3、N 台机器：填**同一个** `sync.server.client_id` 和
+      **同一个** `sync.encryption_secret`（与首台一致），跑 `task sync`，
+      本地 replica 自动从服务端拉取并合并密文增量。
 
       ## 客户端 ID 白名单（可选）
 
@@ -92,7 +96,8 @@ locales:
       On every replica:
 
       ```bash
-      # one fresh client_id per machine (UUID v4)
+      # client_id identifies *the task dataset*, not the machine.
+      # ALL replicas share the same UUID.
       CID=$(uuidgen)
 
       # one shared encryption secret across ALL replicas
@@ -104,6 +109,10 @@ locales:
 
       task sync   # initial push
       ```
+
+      > NOTE: TaskChampion isolates history chains *per client_id* on
+      > the server. All replicas must use the **same** `client_id` to
+      > see each other's tasks — not one UUID per machine.
 
       ### vit
 
@@ -121,10 +130,10 @@ locales:
 
       ## Adding replicas
 
-      For the 2nd, 3rd, ... machine: use a **different** `client_id` per
-      replica (one UUID each), but the **same** `sync.encryption_secret`,
-      then run `task sync`. Your local replica merges against the encrypted
-      deltas already on the server.
+      For the 2nd, 3rd, ... machine: use the **same** `sync.server.client_id`
+      and **same** `sync.encryption_secret` as the first replica, then run
+      `task sync`. Your local replica pulls and merges the encrypted deltas
+      from the server.
 
       ## Client-ID allowlist (optional)
 

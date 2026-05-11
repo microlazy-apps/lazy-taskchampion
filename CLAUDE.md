@@ -143,8 +143,14 @@ client side (`task` / `vit`). Three `~/.taskrc` keys do everything:
 | Key | Purpose | Per-machine? |
 |---|---|---|
 | `sync.server.url` | base URL of this lpk | same |
-| `sync.server.client_id` | UUID identifying this replica | **different** |
+| `sync.server.client_id` | UUID identifying *the task dataset* (NOT the machine) | **same** |
 | `sync.encryption_secret` | key for end-to-end encryption | **same** |
+
+The server isolates history chains **per client_id**, so replicas
+sharing tasks must share the same UUID. Verified by direct API probe
+2026-05-11: `GET /v1/client/get-child-version/NIL` with two different
+`X-Client-Id` headers returns two independent chains (one 200 + data,
+one 404).
 
 vit has no sync code of its own — `S` → `subprocess(['task','sync'])`.
 Config to auto-sync on vit start/quit lives in `~/.vit/config.ini`

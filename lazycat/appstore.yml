@@ -7,7 +7,10 @@ support_pc: true
 support_mobile: false
 
 screenshots:
-  pc: []
+  pc:
+    - lazycat/screenshots/01-task-sync.png
+    - lazycat/screenshots/02-task-list.png
+    - lazycat/screenshots/03-second-replica.png
   mobile: []
 
 description:
