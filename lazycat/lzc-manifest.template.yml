@@ -18,7 +18,9 @@ services:
       - RUST_LOG=info
       - DATA_DIR=/var/lib/taskchampion-sync-server/data
       - LISTEN=0.0.0.0:8080
+      {{- if .U.CLIENT_ID }}
       - CLIENT_ID={{.U.CLIENT_ID}}
+      {{- end }}
     binds:
       - /lzcapp/var/persist:/var/lib/taskchampion-sync-server/data
     healthcheck:
